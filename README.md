@@ -1,6 +1,13 @@
-# Confluent Platform and Khermes Akka Cluster
+# Kafka Ecosystem Tools
 
-This repo is a study and test with Kafka and the ecosystem.
+A Kafka and ecosystem test environment.
+
+The goal is integrate the following projects:
+  * Confluent Open Source Platform Tools
+  * Khermes Distributed data generation via Akka Cluster
+  * Kafka Manager
+  * Stream Reactor Kafka Connectors
+  * Landoop Kafka UIs
 
 Software used:
 * Vagrant
