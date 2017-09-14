@@ -36,7 +36,7 @@ ansible-playbook start-services.yaml -i inventory.py
 ansible-playbook start-app.yaml -i inventory.py
 ```
 
-### Vagrant VMs
+# Vagrant Virtualbox VMs
 
 By default this will create:
 
