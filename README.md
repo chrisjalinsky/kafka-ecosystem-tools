@@ -49,6 +49,7 @@ Services include: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, 
 
 ### Akka Cluster (Khermes)
 1 node Akka Cluster to generate Avro Data in Kafka
+
 Services include: Khermes Akka Seed, Khermes Akka Node
 #### Hosts:
 
