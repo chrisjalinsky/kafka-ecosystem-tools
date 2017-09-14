@@ -2,14 +2,14 @@
 
 A Kafka and ecosystem test environment.
 
-The goal is integrate the following projects:
+**The goal is integrate the following projects:**
   * Confluent Open Source Platform Tools
   * Khermes Distributed data generation via Akka Cluster
   * Kafka Manager
   * Stream Reactor Kafka Connectors
   * Landoop Kafka UIs
 
-Software used:
+**Software used:**
 * Vagrant
 * Virtualbox
 * Ansible
@@ -41,20 +41,20 @@ ansible-playbook start-app.yaml -i inventory.py
 By default this will create:
 
 **Kafka Cluster**
-* 3 node Kafka cluster and Zookeeper ensemble
+3 node Kafka cluster and Zookeeper ensemble
 
 **Hosts:**
-- data1.lan - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
-- data2.lan - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
-- data3.lan - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
+- **data1.lan** - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
+- **data2.lan** - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
+- **data3.lan** - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
 
 **Akka Cluster (Khermes)**
-* 3 node Akka Cluster
+3 node Akka Cluster to generate Avro Data in Kafka
 
 **Hosts:**
-- akka1.lan - Services: Khermes Akka Seed, Khermes Akka Node
-- akka2.lan - Services: Khermes Akka Seed, Khermes Akka Node
-- akka3.lan - Services: Khermes Akka Seed, Khermes Akka Node
+- **akka1.lan** - Services: Khermes Akka Seed, Khermes Akka Node
+- **akka2.lan** - Services: Khermes Akka Seed, Khermes Akka Node
+- **akka3.lan** - Services: Khermes Akka Seed, Khermes Akka Node
 
 ### Notable UIs:
 UIs are using Apache Web Server Virtualhosts
