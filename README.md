@@ -70,7 +70,7 @@ UIs are using Apache Web Server Virtualhosts
 * [Khermes Console](http://akka1.lan:9080/console)
 
 ### Khermes Akka Distributed Data generator for Kafka
-[STRATIO BIG DATA](http://www.stratio.com/) has created a cool project.
+[STRATIO BIG DATA](http://www.stratio.com/)
 
 It will serve as a study in Akka Actors, web sockets and fake data generation.
 
@@ -82,10 +82,11 @@ Follow the example directions to start pushing data to Kafka:
 * [Zookeeper Homepage](https://zookeeper.apache.org/)
 * [Kafka Homepage](https://kafka.apache.org/)
 
-Using the standard Apache release instead of the versions in the Confluent Package
+Use the standard Apache release instead of the versions in the Confluent Package
 
 ### Confluent Open Source Platform
 [Confluent Open Source](https://www.confluent.io/product/confluent-open-source/)
+
 **Use the following Confluent OSS services:**
 
 * [Kafka Rest Proxy](https://docs.confluent.io/current/kafka-rest/docs/index.html)
