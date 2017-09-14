@@ -30,7 +30,9 @@ ansible-playbook start-app.yaml -i inventory.py
 ```
 
 ### Vagrant VMs
+
 By default this will create:
+
 **Kafka Cluster**
 * 3 node Kafka cluster and Zookeeper ensemble
 
@@ -40,8 +42,7 @@ By default this will create:
 - data3.lan - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
 
 **Akka Cluster (Khermes)**
-* 3 Akka seed nodes forming the cluster
-* 3 Akka worker nodes joining the cluster
+* 3 node Akka Cluster
 
 **Hosts:**
 - akka1.lan - Services: Khermes Akka Seed, Khermes Akka Node
