@@ -1,0 +1,81 @@
+---
+
+- name: Allow all hosts to resolve each other, and install common packages
+  hosts: all
+  become: yes
+  become_user: root
+  roles:
+    - role: hostsfile
+      hostsfile_iface: "ansible_enp0s8"
+    - role: git
+    - role: java
+
+- name: Install Apache zookeeper
+  hosts: data_nodes
+  become: yes
+  become_user: root
+  roles:
+    - role: zookeeper
+      zookeeper_servers: "{{ groups['data_nodes'] }}"
+  tags:
+    - "zookeeper"
+
+- name: Install Apache Kafka
+  hosts: data_nodes
+  become: yes
+  become_user: root
+  roles:
+    - role: kafka
+      kafka_brokers: "{{ groups['data_nodes'] }}"
+      kafka_zk_endpoint: "{{ groups['data_nodes'] | join(':2181,') }}:2181"
+      kafka_bootstrap_servers: "{{ groups['data_nodes'] | join(':9092,') }}:9092"
+    - role: kafka_manager
+      kafka_manager_tasks:
+        - "upload"
+  tags:
+    - "kafka"
+
+- name: Install Confluent packages, we will not use the Confluent Zookeeper and Kafka packages
+  hosts: confluent_servers
+  become: yes
+  become_user: root
+  roles:
+    - role: confluent
+      confluent_kafka_broker_list: "{{ groups['data_nodes'] }}"
+      confluent_kafka_log_dirs: "/tmp/kafka-logs"
+      confluent_kafka_zookeeper_connect: "{{ groups['data_nodes'] | join(':2181,') }}:2181"
+      confluent_kafka_rest_config_zookeeper_connect: "{{ groups['data_nodes'] | join(':2181,') }}:2181"
+      confluent_kafka_rest_config_schema_registry_url: "http://{{ inventory_hostname }}:8081"
+      confluent_kafka_rest_config_listeners: "http://{{ inventory_hostname }}:8082"
+      confluent_schema_registry_kafkastore_connection_url: "{{ inventory_hostname }}:2181"
+      confluent_connect_bootstrap_servers: "{{ groups['data_nodes'] | join(':9092,') }}:9092"
+      confluent_connect_schema_registry_url: "http://{{ inventory_hostname }}:8081"
+      confluent_connect_rest_advertised_host_name: "{{ inventory_hostname }}"
+      confluent_connect_config_replication_factor: "{{ groups['data_nodes']|length }}"
+      confluent_connect_offset_replication_factor: "{{ groups['data_nodes']|length }}"
+      confluent_connect_status_replication_factor: "{{ groups['data_nodes']|length }}"
+  tags:
+    - "confluent"
+
+- name: Install Landoop UIs
+  hosts: confluent_servers
+  become: yes
+  become_user: root
+  roles:
+    - role: schema_registry_ui
+    - role: kafka_connect_ui
+    - role: kafka_topics_ui
+  tags:
+    - "ui"
+
+- name: Install compiled Akka cluster Khermes app
+  hosts: akka_cluster
+  become: yes
+  become_user: root
+  roles:
+    - role: khermes
+      khermes_cluster_zk_conn: "{{ groups['data_nodes'] | join(':2181,') }}:2181"
+      khermes_cluster_seed_node_list: "{{ groups['akka_seeds'] }}"
+      khermes_cluster_node_list: "{{ groups['akka_cluster'] }}"
+  tags:
+    - "khermes"

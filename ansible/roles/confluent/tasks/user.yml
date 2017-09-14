@@ -1,0 +1,14 @@
+---
+
+- name: Create Confluent group
+  group: name="{{ confluent_user_group }}" gid="{{ confluent_user_group_gid }}"
+
+- name: Create Confluent user
+  user: name="{{ confluent_user }}" uid="{{ confluent_user_uid }}" group="{{ confluent_user_group }}"
+
+- name: Add Confluent user to sudoers
+  lineinfile:
+    line: "{{ confluent_user }} ALL = (ALL) NOPASSWD:ALL"
+    dest: "/etc/sudoers.d/{{ confluent_user }}"
+    regexp: "^{{ confluent_user }}\\s+ALL.*"
+    create: yes

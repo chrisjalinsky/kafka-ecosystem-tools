@@ -1,0 +1,14 @@
+---
+
+
+- name: Ensure upload zip dir exists
+  file:
+    dest: "{{ kakfa_manager_zip_dir }}"
+    state: directory
+    recurse: yes
+
+- name: Ensure zip uploaded
+  unarchive:
+    src: "{{ kafka_manager_zip_archive_name }}"
+    dest: "{{ kakfa_manager_zip_dir }}/"
+    creates: "{{ kakfa_manager_zip_dir }}/{{ kafka_manager_zip_name }}/{{ kafka_manager_relative_exec }}"

@@ -1,0 +1,13 @@
+[Unit]
+Description=Kafka Manager
+Documentation=https://github.com/yahoo/kafka-manager
+After=network.target
+
+[Service]
+User={{ kafka_manager_user }}
+ExecStart={{ kafka_manager_symlink }}/{{ kafka_manager_relative_exec }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

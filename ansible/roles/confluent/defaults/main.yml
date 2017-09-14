@@ -1,0 +1,185 @@
+---
+confluent_short_version: "3.3"
+confluent_version: "3.3.0"
+
+confluent_user: "mapr"
+confluent_user_uid: "2000"
+confluent_user_group: "mapr"
+confluent_user_group_gid: "2000"
+confluent_pkg_url: "http://packages.confluent.io/archive/{{ confluent_short_version }}/confluent-oss-{{ confluent_version }}-2.11.tar.gz"
+confluent_build_git_repo: "https://github.com/confluentinc/kafka-connect-hdfs.git"
+
+confluent_dir: "/opt/confluent-{{ confluent_version }}"
+
+# Relative bin dir for everything
+confluent_bin_dir: "bin"
+
+# Relative kafka config dir
+confluent_kafka_conf_dir: "etc/kafka"
+confluent_kafka_conf_file: "server.properties"
+confluent_kafka_broker_list:
+  - "{{ inventory_hostname }}"
+confluent_kafka_zookeeper_connect: "{{ inventory_hostname }}:2181"
+confluent_kafka_advertised_listeners: "PLAINTEXT://{{ inventory_hostname }}:9092"
+confluent_kafka_log_dirs: "/tmp/kafka-logs"
+
+# Relative Zookeeper config dir
+confluent_zk_conf_dir: "etc/kafka"
+confluent_zk_conf_file: "zookeeper.properties"
+confluent_zk_datadir: "/tmp/zookeeper"
+
+# Relative Schema Registry config dir
+confluent_schema_registry_conf_dir: "etc/schema-registry"
+confluent_schema_registry_conf_file: "schema-registry.properties"
+confluent_schema_registry_cors_origin: "*"
+confluent_schema_registry_cors_methods: "GET,POST,PUT,DELETE,OPTIONS,HEAD"
+confluent_schema_registry_listeners: "http://{{ inventory_hostname }}:8081"
+confluent_schema_registry_kafkastore_connection_url: "{{ inventory_hostname }}:2181"
+
+# ./etc/schema-registry/connect-avro-distributed.properties
+confluent_connect_conf_file: "connect-avro-distributed.properties"
+confluent_connect_config_topic: "connect-configs"
+confluent_connect_config_replication_factor: "1"
+confluent_connect_offset_topic: "connect-offsets"
+confluent_connect_offset_replication_factor: "1"
+confluent_connect_status_topic: "connect-statuses"
+confluent_connect_status_replication_factor: "1"
+confluent_connect_group_id: "connect-cluster"
+confluent_connect_bootstrap_servers: "{{ inventory_hostname }}:9092"
+confluent_connect_schema_registry_url: "http://{{ inventory_hostname }}:8081"
+confluent_connect_rest_port: "8083"
+confluent_connect_rest_advertised_host_name: "{{ inventory_hostname }}"
+# Loads connectors defined below
+confluent_connect_plugin_path: "/opt/connectors"
+confluent_connect_cors_origin: "*"
+confluent_connect_cors_methods: "GET,POST,PUT,DELETE,OPTIONS,HEAD"
+
+# Relative Kafka Rest config dir
+confluent_kafka_rest_conf_dir: "etc/kafka-rest"
+confluent_kafka_rest_conf_file: "kafka-rest.properties"
+confluent_kafka_rest_config_id: "kafka-rest-{{ inventory_hostname }}"
+confluent_kafka_rest_config_zookeeper_connect: "{{ inventory_hostname }}:2181"
+confluent_kafka_rest_config_schema_registry_url: "http://{{ inventory_hostname }}:8081"
+confluent_kafka_rest_config_listeners: "http://{{ inventory_hostname }}:8082"
+confluent_kafka_rest_config_cors_origin: "*"
+confluent_kafka_rest_config_cors_methods: "GET,POST,PUT,DELETE,OPTIONS,HEAD"
+
+# Relative Connect config dir
+confluent_connect_hdfs_build_src: True
+confluent_connect_hdfs_kafka_topics: "ab12"
+confluent_connect_hdfs_hive_metastore_uris: "thrift://jobs1.lan:9083"
+confluent_connect_hdfs_version: "2.7.0"
+confluent_connect_hdfs_conf_dir: "etc/kafka-connect-hdfs"
+confluent_connect_hdfs_conf_file: "quickstart-hdfs.properties"
+# Build specific, optional
+confluent_connect_hdfs_src_dir: "/opt/src/connect-hdfs-v{{ confluent_version }}"
+confluent_connect_hdfs_java_lib_dir: "{{ confluent_version }}/share/java/kafka-connect-hdfs"
+
+# Service scripts
+confluent_upstart_dir: "/etc/init"
+confluent_systemd_dir: "/etc/systemd/system"
+
+confluent_upstart_kafka_svc_name: "kafka"
+confluent_upstart_zk_svc_name: "zookeeper"
+confluent_upstart_schema_registry_svc_name: "schema-registry"
+confluent_upstart_connect_hdfs_svc_name: "connect-hdfs"
+confluent_upstart_connect_svc_name: "connect"
+confluent_upstart_kafka_rest_svc_name: "kafka-rest"
+
+confluent_upstart_kafka_svc_file: "{{ confluent_upstart_kafka_svc_name }}.conf"
+confluent_upstart_zk_svc_file: "{{ confluent_upstart_zk_svc_name }}.conf"
+confluent_upstart_schema_registry_svc_file: "{{ confluent_upstart_schema_registry_svc_name }}.conf"
+confluent_upstart_connect_hdfs_svc_file: "{{ confluent_upstart_connect_hdfs_svc_name }}.conf"
+confluent_upstart_connect_svc_file: "{{ confluent_upstart_connect_svc_name }}.conf"
+confluent_upstart_kafka_rest_svc_file: "{{ confluent_upstart_kafka_rest_svc_name }}.conf"
+
+confluent_systemd_kafka_svc_file: "{{ confluent_upstart_kafka_svc_name }}.service"
+confluent_systemd_zk_svc_file: "{{ confluent_upstart_zk_svc_name }}.service"
+confluent_systemd_schema_registry_svc_file: "{{ confluent_upstart_schema_registry_svc_name }}.service"
+confluent_systemd_connect_hdfs_svc_file: "{{ confluent_upstart_connect_hdfs_svc_name }}.service"
+confluent_systemd_connect_svc_file: "{{ confluent_upstart_connect_svc_name }}.service"
+confluent_systemd_kafka_rest_svc_file: "{{ confluent_upstart_kafka_rest_svc_name }}.service"
+
+# Templates
+confluent_template_key: "default"
+
+confluent_templates:
+  - src: "{{ confluent_template_key }}/{{ confluent_kafka_conf_dir }}/{{ confluent_kafka_conf_file }}"
+    dest: "{{ confluent_dir }}/{{ confluent_kafka_conf_dir }}/{{ confluent_kafka_conf_file }}"
+  - src: "{{ confluent_template_key }}/{{ confluent_zk_conf_dir }}/{{ confluent_zk_conf_file }}"
+    dest: "{{ confluent_dir }}/{{ confluent_zk_conf_dir }}/{{ confluent_zk_conf_file }}"
+  - src: "{{ confluent_template_key }}/{{ confluent_schema_registry_conf_dir }}/{{ confluent_schema_registry_conf_file }}"
+    dest: "{{ confluent_dir }}/{{ confluent_schema_registry_conf_dir }}/{{ confluent_schema_registry_conf_file }}"
+  - src: "{{ confluent_template_key }}/{{ confluent_schema_registry_conf_dir }}/connect-avro-distributed.properties"
+    dest: "{{ confluent_dir }}/{{ confluent_schema_registry_conf_dir }}/connect-avro-distributed.properties"
+  - src: "{{ confluent_template_key }}/{{ confluent_schema_registry_conf_dir }}/connect-avro-standalone.properties"
+    dest: "{{ confluent_dir }}/{{ confluent_schema_registry_conf_dir }}/connect-avro-standalone.properties"
+  - src: "{{ confluent_template_key }}/{{ confluent_kafka_rest_conf_dir }}/{{ confluent_kafka_rest_conf_file }}"
+    dest: "{{ confluent_dir }}/{{ confluent_kafka_rest_conf_dir }}/{{ confluent_kafka_rest_conf_file }}"
+  - src: "{{ confluent_template_key }}/{{ confluent_connect_hdfs_conf_dir }}/{{ confluent_connect_hdfs_version }}-{{ confluent_connect_hdfs_conf_file }}"
+    dest: "{{ confluent_dir }}/{{ confluent_connect_hdfs_conf_dir }}/{{ confluent_connect_hdfs_conf_file }}"
+
+confluent_upstart_templates:
+  - src: "{{ confluent_template_key }}{{ confluent_upstart_dir }}/{{ confluent_upstart_kafka_svc_file }}"
+    dest: "{{ confluent_upstart_dir }}/{{ confluent_upstart_kafka_svc_file }}"
+  - src: "{{ confluent_template_key }}{{ confluent_upstart_dir }}/{{ confluent_upstart_zk_svc_file }}"
+    dest: "{{ confluent_upstart_dir }}/{{ confluent_upstart_zk_svc_file }}"
+  - src: "{{ confluent_template_key }}{{ confluent_upstart_dir }}/{{ confluent_upstart_schema_registry_svc_file }}"
+    dest: "{{ confluent_upstart_dir }}/{{ confluent_upstart_schema_registry_svc_file }}"
+  - src: "{{ confluent_template_key }}{{ confluent_upstart_dir }}/{{ confluent_upstart_connect_hdfs_svc_file }}"
+    dest: "{{ confluent_upstart_dir }}/{{ confluent_upstart_connect_hdfs_svc_file }}"
+  - src: "{{ confluent_template_key }}{{ confluent_upstart_dir }}/{{ confluent_upstart_kafka_rest_svc_file }}"
+    dest: "{{ confluent_upstart_dir }}/{{ confluent_upstart_kafka_rest_svc_file }}"
+  - src: "{{ confluent_template_key }}{{ confluent_upstart_dir }}/{{ confluent_upstart_connect_svc_file }}"
+    dest: "{{ confluent_upstart_dir }}/{{ confluent_upstart_connect_svc_file }}"
+
+confluent_systemd_templates:
+  - src: "{{ confluent_template_key }}{{ confluent_systemd_dir }}/{{ confluent_systemd_schema_registry_svc_file }}.j2"
+    dest: "{{ confluent_systemd_dir }}/{{ confluent_systemd_schema_registry_svc_file }}"
+  - src: "{{ confluent_template_key }}{{ confluent_systemd_dir }}/{{ confluent_systemd_connect_hdfs_svc_file }}.j2"
+    dest: "{{ confluent_systemd_dir }}/{{ confluent_systemd_connect_hdfs_svc_file }}"
+  - src: "{{ confluent_template_key }}{{ confluent_systemd_dir }}/{{ confluent_systemd_kafka_rest_svc_file }}.j2"
+    dest: "{{ confluent_systemd_dir }}/{{ confluent_systemd_kafka_rest_svc_file }}"
+  - src: "{{ confluent_template_key }}{{ confluent_systemd_dir }}/{{ confluent_systemd_connect_svc_file }}.j2"
+    dest: "{{ confluent_systemd_dir }}/{{ confluent_systemd_connect_svc_file }}"
+  #- src: "{{ confluent_template_key }}{{ confluent_systemd_dir }}/{{ confluent_systemd_kafka_svc_file }}.j2"
+  #  dest: "{{ confluent_systemd_dir }}/{{ confluent_systemd_kafka_svc_file }}"
+  #- src: "{{ confluent_template_key }}{{ confluent_systemd_dir }}/{{ confluent_systemd_zk_svc_file }}.j2"
+  #  dest: "{{ confluent_systemd_dir }}/{{ confluent_systemd_zk_svc_file }}"
+
+
+# Jars for HDFS/MapR
+confluent_connect_java_share_lib_dir: "share/java/kafka-connect-hdfs"
+confluent_connect_symlinks_to_library: []
+#confluent_connect_symlinks_to_library:
+#  - src: "/opt/mapr/lib/json-20080701.jar"
+#    dest: "{{ confluent_dir }}/{{ confluent_connect_java_share_lib_dir }}/json-20080701.jar"
+#  - src: "/opt/mapr/lib/maprfs-4.0.2-mapr.jar"
+#    dest: "{{ confluent_dir }}/{{ confluent_connect_java_share_lib_dir }}/maprfs-4.0.2-mapr.jar"
+#  - src: "/opt/mapr/lib/hadoop-auth-2.5.1.jar"
+#    dest: "{{ confluent_dir }}/{{ confluent_connect_java_share_lib_dir }}/hadoop-auth-2.5.1.jar"
+#  - src: "/opt/mapr/lib/hadoop-common-2.5.1.jar"
+#    dest: "{{ confluent_dir }}/{{ confluent_connect_java_share_lib_dir }}/hadoop-common-2.5.1.jar"
+#  - src: "/opt/mapr/lib/commons-collections-3.2.1.jar"
+#    dest: "{{ confluent_dir }}/{{ confluent_connect_java_share_lib_dir }}/commons-collections-3.2.1.jar"
+#  - src: "/opt/mapr/lib/commons-configuration-1.6.jar"
+#    dest: "{{ confluent_dir }}/{{ confluent_connect_java_share_lib_dir }}/commons-configuration-1.6.jar"
+#  - src: "/opt/mapr/lib/hadoop-yarn-common-2.5.1.jar"
+#    dest: "{{ confluent_dir }}/{{ confluent_connect_java_share_lib_dir }}/hadoop-yarn-common-2.5.1.jar"
+
+
+# Services
+confluent_services: []
+
+# Example
+#confluent_services:
+#  - name: "kafka"
+#    state: "restarted"
+#  - name: "zookeeper"
+#  - name: "schema-registry"
+
+confluent_connectors:
+  - name: "stream-reactor-0.3.0_3.3.0"
+    url: "https://archive.landoop.com/third-party/stream-reactor/stream-reactor-0.3.0_3.3.0.tar.gz"
+    dest: "/var/tmp/stream-reactor-0.3.0_3.3.0.tar.gz"
+    home_dir: "/opt/connectors"

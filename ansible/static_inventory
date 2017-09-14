@@ -1,0 +1,15 @@
+[data_nodes]
+data1.lan
+
+[akka_seeds]
+data1.lan
+
+[akka_nodes]
+data1.lan
+
+[confluent_servers]
+data1.lan
+
+[akka_cluster:children]
+akka_seeds
+akka_nodes

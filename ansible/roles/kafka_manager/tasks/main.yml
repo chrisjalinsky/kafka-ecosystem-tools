@@ -1,0 +1,32 @@
+---
+
+
+- name: Ensure unzip is present to unarchive
+  apt:
+    name: unzip
+
+- name: Ensure build tasks included when specified
+  when: "'build' in kafka_manager_tasks"
+  include: build.yml
+
+- name: Ensure local prebuilt ZIP uploaded when specified
+  when: "'upload' in kafka_manager_tasks"
+  include: upload.yml
+
+
+- name: Ensure symlink set to {{ kafka_manager_symlink }}
+  file:
+    src: "{{ kakfa_manager_zip_dir }}/{{ kafka_manager_zip_name }}"
+    dest: "/opt/kafka-manager"
+    state: link
+
+- name: Ensure common templates synced
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: "application.conf"
+      dest: "{{ kafka_manager_symlink }}/{{ kafka_manager_relative_conf_dir }}/application.conf"
+
+- name: "Ensure service-{{ ansible_distribution_version }}.yml tasks included"
+  include: "service-{{ ansible_distribution_version }}.yml"

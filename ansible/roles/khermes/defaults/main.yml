@@ -1,0 +1,26 @@
+---
+
+# NOTE! The master branch ansible version is being used in the task!!
+khermes_version: "0.1.0"
+khermes_home_dir: "/opt/khermes-{{ khermes_version }}"
+
+khermes_akka_name: "khermes"
+
+khermes_user: "khermes"
+khermes_user_group: "khermes"
+khermes_user_uid: "31004"
+khermes_user_group_gid: "31004"
+
+khermes_cluster_seed_port: "2552"
+khermes_cluster_node_port: "2554"
+
+khermes_cluster_seed_jvm_heap: "4G"
+khermes_cluster_node_jvm_heap: "4G"
+
+khermes_cluster_zk_conn: "localhost:2181"
+
+khermes_cluster_seed_node_list:
+  - "{{ inventory_hostname }}"
+
+khermes_cluster_node_list:
+  - "{{ inventory_hostname }}"

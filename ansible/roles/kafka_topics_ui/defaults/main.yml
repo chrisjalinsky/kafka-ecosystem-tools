@@ -1,0 +1,14 @@
+---
+
+kafka_topics_ui_version: "0.9.2"
+kafka_topics_ui_tmpdir: "/tmp"
+kafka_topics_ui_parentdir: "/var/www/html/kafka_topics"
+kafka_topics_ui_owner: "www-data"
+kafka_topics_ui_group: "www-data"
+kafka_topics_ui_tarball_format: "tar.gz"
+kafka_topics_ui_tarball_name: "kafka-topics-ui-{{ kafka_topics_ui_version }}"
+kafka_topics_ui_tarball_file: "{{ kafka_topics_ui_tarball_name }}.{{ kafka_topics_ui_tarball_format }}"
+kafka_topics_ui_tarball_dest: "{{ kafka_topics_ui_tmpdir }}/{{ kafka_topics_ui_tarball_file }}"
+kafka_topics_ui_port: "8090"
+kafka_topics_ui_connect_url: "http://{{ inventory_hostname }}"
+kafka_topics_ui_kafka_rest_url: "http://{{ inventory_hostname }}:8082"

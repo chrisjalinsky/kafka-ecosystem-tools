@@ -1,0 +1,11 @@
+- file: path=/opt/src state=directory mode=0777
+
+- file: path={{ confluent_dir }} state=directory owner={{ confluent_user }} group={{ confluent_user_group }} recurse=yes
+
+- name: Download confluent package
+  #become_user: "{{ confluent_user }}"
+  get_url: url={{ confluent_pkg_url }} dest=/opt/src/confluent-{{ confluent_version }}.tar.gz
+
+- name: Unpack tarball
+  #become_user: "{{ confluent_user }}"
+  command: tar zxf /opt/src/confluent-{{ confluent_version }}.tar.gz --strip-components=1 chdir={{ confluent_dir }} creates={{ confluent_dir }}/bin

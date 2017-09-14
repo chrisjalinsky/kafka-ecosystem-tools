@@ -1,0 +1,32 @@
+---
+
+- name: Ensure directory is present when zookeeper_download is set to "yes"
+  when: zookeeper_download == "yes"
+  file:
+    dest: "{{ zookeeper_download_parent_dir }}"
+    state: directory
+
+- name: Create Zookeeper dir
+  file:
+    dest: "{{ zookeeper_dir }}"
+    state: directory
+
+- name: Download zookeeper version when zookeeper_download is set to "yes"
+  when: zookeeper_download == "yes"
+  get_url:
+    url: "{{ zookeeper_url }}"
+    dest: "{{ zookeeper_download_parent_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz"
+
+- name: Unpack tarball
+  when: zookeeper_download == "yes"
+  shell: "tar zxf {{ zookeeper_download_parent_dir }}/zookeeper-{{ zookeeper_version }}.tar.gz --strip-components=1"
+  args:
+    chdir: "{{ zookeeper_dir }}"
+    creates: "{{ zookeeper_dir }}/bin"
+
+- name: Unarchive zookeeper package to destination when zookeeper_download is set to "no"
+  when: zookeeper_download == "no"
+  unarchive:
+    src: "{{ zookeeper_archive }}"
+    dest: "{{ zookeeper_base_dir }}"
+    creates: "{{ zookeeper_dir }}/bin"

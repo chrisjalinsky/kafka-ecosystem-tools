@@ -1,0 +1,66 @@
+---
+
+- name: Create khermes user group
+  group:
+    name: "{{ khermes_user_group }}"
+    gid: "{{ khermes_user_group_gid }}"
+
+- name: Create khermes user
+  user:
+    name: "{{ khermes_user }}"
+    uid: "{{ khermes_user_uid }}"
+    groups: "{{ khermes_user_group }}"
+    append: yes
+
+- name: Clone repo
+  git:
+    repo: "https://github.com/Stratio/khermes.git"
+    dest: "{{ khermes_home_dir }}"
+    update: no
+    umask: "000"
+    #version: "{{ khermes_version }}"
+
+- name: Ensure target jar dir present
+  file:
+    dest: "{{ khermes_home_dir }}/target"
+    state: directory
+    owner: "{{ khermes_user }}"
+    group: "{{ khermes_user_group }}"
+
+- name: Ensure jar present
+  copy:
+    src: "khermes-0.2.0-SNAPSHOT-allinone.jar"
+    dest: "{{ khermes_home_dir }}/target/khermes-0.2.0-SNAPSHOT-allinone.jar"
+    owner: "{{ khermes_user }}"
+    group: "{{ khermes_user_group }}"
+
+#- name: "mvn clean package -Dmaven.test.skip=true"
+#  shell: "mvn clean package -Dmaven.test.skip=true"
+#  become: yes
+#  become_user: "{{ khermes_user }}"
+#  args:
+#    chdir: "{{ khermes_home_dir }}"
+#    creates: "{{ khermes_home_dir }}/target/khermes-0.2.0-SNAPSHOT-allinone.jar"
+
+
+- name: Template systemd service file
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int >= 16
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: "khermes-seed.service"
+      dest: "/etc/systemd/system/khermes-seed.service"
+    - src: "khermes-node.service"
+      dest: "/etc/systemd/system/khermes-node.service"
+
+- name: Template init seed script
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int < 16
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: "khermes-seed.conf"
+      dest: "/etc/init/khermes-seed.conf"
+    - src: "khermes-node.conf"
+      dest: "/etc/init/khermes-node.conf"

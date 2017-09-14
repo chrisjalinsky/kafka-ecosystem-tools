@@ -1,0 +1,71 @@
+---
+
+- name: Ensure Apache present
+  apt:
+    name: apache2
+    cache_valid_time: 3600
+    update_cache: yes
+
+- name: Ensure dirs exist
+  file:
+    dest: "{{ kafka_connect_ui_parentdir }}"
+    state: directory
+    owner: "{{ kafka_connect_ui_owner }}"
+    group: "{{ kafka_connect_ui_group }}"
+    mode: "0755"
+    recurse: yes
+
+- name: Ensure Schema Registry UI tarball copied to node - {{ kafka_connect_ui_tarball_dest }}
+  copy:
+    src: "{{ kafka_connect_ui_tarball_file }}"
+    dest: "{{ kafka_connect_ui_tarball_dest }}"
+
+- name: Ensure {{ kafka_connect_ui_tarball_dest }} is unarchived to {{ kafka_connect_ui_parentdir }}/{{ kafka_connect_ui_tarball_name }}
+  unarchive:
+    src: "{{ kafka_connect_ui_tarball_dest }}"
+    dest: "{{ kafka_connect_ui_parentdir }}"
+    owner: "{{ kafka_connect_ui_owner }}"
+    group: "{{ kafka_connect_ui_group }}"
+    mode: "0755"
+    remote_src: yes
+    creates: "{{ kafka_connect_ui_parentdir }}/index.html"
+
+- name: Template env.js
+  template:
+    src: env.js
+    dest: "{{ kafka_connect_ui_parentdir }}/env.js"
+    owner: "{{ kafka_connect_ui_owner }}"
+    group: "{{ kafka_connect_ui_group }}"
+    mode: "0755"
+
+- name: Ensure Vhost copied to Apache dir
+  template:
+    src: kafka_connect_ui.conf
+    dest: /etc/apache2/sites-available/kafka_connect_ui.conf
+
+- name: Ensure default vhost disabled
+  shell: a2dissite 000-default
+  register: a2dissite_default
+  failed_when: >
+    a2dissite_default.rc != 0 and ("does not exist!" not in a2dissite_default.stderr)
+  changed_when: False
+
+- name: Ensure kafka_connect_ui.conf enabled in Apache
+  shell: a2ensite kafka_connect_ui
+  register: a2ensite_kafka_connect_ui
+  failed_when: >
+    a2ensite_kafka_connect_ui.rc != 0 and ("already enabled" not in a2ensite_kafka_connect_ui.stderr)
+  changed_when: False
+
+- name: Ensure virtualhost port {{ kafka_connect_ui_connect_port }} listening in apache2
+  register: kafka_connect_ui_port
+  lineinfile:
+    dest: "/etc/apache2/ports.conf"
+    line: "Listen {{ kafka_connect_ui_connect_port }}"
+    regexp: "Listen {{ kafka_connect_ui_connect_port }}"
+
+- name: Reload Apache
+  when: kafka_connect_ui_port|changed or a2dissite_default|changed
+  service:
+    name: apache2
+    state: reloaded

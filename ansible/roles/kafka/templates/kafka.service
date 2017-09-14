@@ -1,0 +1,13 @@
+[Unit]
+Description=Kafka
+Documentation=https://kafka.apache.org/
+After=network.target
+
+[Service]
+User={{ kafka_user }}
+ExecStart={{ kafka_dir }}/bin/kafka-server-start.sh {{ kafka_dir }}/config/server.properties
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

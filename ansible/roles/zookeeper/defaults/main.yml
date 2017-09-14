@@ -1,0 +1,19 @@
+---
+
+zookeeper_user: "zookeeper"
+zookeeper_group: "zookeeper"
+
+zookeeper_version: "3.4.9"
+zookeeper_download: "yes"
+zookeeper_download_parent_dir: "/var/tmp"
+zookeeper_archive: "zookeeper-{{ zookeeper_version}}.tar.gz"
+zookeeper_url: "http://mirror.metrocast.net/apache/zookeeper/zookeeper-{{ zookeeper_version }}/{{ zookeeper_archive }}"
+zookeeper_base_dir: "/opt"
+zookeeper_dir: "{{ zookeeper_base_dir }}/zookeeper-{{ zookeeper_version }}"
+zookeeper_conf_dir: "{{ zookeeper_dir }}/conf"
+zookeeper_data: /var/lib/zookeeper
+zookeeper_logs: /var/log/zookeeper
+
+zookeeper_myid: 1
+zookeeper_servers:
+  - localhost

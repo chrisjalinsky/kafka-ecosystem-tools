@@ -1,0 +1,46 @@
+---
+
+- name: Set global fact for akka cluster
+  hosts: akka_cluster
+  become: yes
+  become_user: root
+  tasks:
+    - name: Set fact for playbook
+      set_fact:
+        fact_host_iface: "ansible_enp0s8"
+        fact_seed_port: "2552"
+        fact_node_port: "2554"
+
+- name: Stop Akka nodes
+  hosts: akka_nodes
+  become: yes
+  become_user: root
+  tasks:
+    - name: Stop Akka nodes
+      register: node_stop
+      systemd:
+        name: khermes-node
+        state: stopped
+
+    - name: Wait max 300 seconds for node port {{ fact_node_port }} to drain connections
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_node_port }}"
+        state: drained
+
+- name: Stop Akka Seeds
+  hosts: akka_seeds
+  become: yes
+  become_user: root
+  tasks:
+    - name: Stop Akka Seed nodes
+      register: seed_stop
+      systemd:
+        name: khermes-seed
+        state: stopped
+
+    - name: Wait max 300 seconds for seed port {{ fact_seed_port }} to drain connections
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_seed_port }}"
+        state: drained

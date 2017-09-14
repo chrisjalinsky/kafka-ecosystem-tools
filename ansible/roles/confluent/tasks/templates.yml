@@ -1,0 +1,24 @@
+---
+
+- name: Include shared templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: yes
+  with_items: "{{ confluent_templates }}"
+
+- name: Include upstart templates
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int < 16
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    backup: yes
+  with_items: "{{ confluent_upstart_templates }}"
+
+- name: Include systemd templates
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int >= 16
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    #backup: yes
+  with_items: "{{ confluent_systemd_templates }}"

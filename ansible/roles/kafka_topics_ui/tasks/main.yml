@@ -1,0 +1,74 @@
+---
+
+- name: Ensure Apache present
+  apt:
+    name: apache2
+    cache_valid_time: 3600
+    update_cache: yes
+
+- name: Ensure dirs exist
+  file:
+    dest: "{{ kafka_topics_ui_parentdir }}"
+    state: directory
+    owner: "{{ kafka_topics_ui_owner }}"
+    group: "{{ kafka_topics_ui_group }}"
+    mode: "0755"
+    recurse: yes
+
+- name: Ensure Kafka Topics UI tarball copied to node - {{ kafka_topics_ui_tarball_dest }}
+  copy:
+    src: "{{ kafka_topics_ui_tarball_file }}"
+    dest: "{{ kafka_topics_ui_tarball_dest }}"
+    owner: "{{ kafka_topics_ui_owner }}"
+    group: "{{ kafka_topics_ui_group }}"
+
+- name: Ensure {{ kafka_topics_ui_tarball_dest }} is unarchived to {{ kafka_topics_ui_parentdir }}/{{ kafka_topics_ui_tarball_name }}
+  unarchive:
+    src: "{{ kafka_topics_ui_tarball_dest }}"
+    dest: "{{ kafka_topics_ui_parentdir }}"
+    owner: "{{ kafka_topics_ui_owner }}"
+    group: "{{ kafka_topics_ui_group }}"
+    mode: "0755"
+    remote_src: yes
+    creates: "{{ kafka_topics_ui_parentdir }}/index.html"
+
+- name: Template env.js
+  template:
+    src: env.js
+    dest: "{{ kafka_topics_ui_parentdir }}/env.js"
+    owner: "{{ kafka_topics_ui_owner }}"
+    group: "{{ kafka_topics_ui_group }}"
+
+- name: Ensure Vhost copied to Apache dir
+  template:
+    src: kafka_topics_ui.conf
+    dest: /etc/apache2/sites-available/kafka_topics_ui.conf
+
+- name: Ensure default vhost disabled
+  shell: a2dissite 000-default
+  register: a2dissite_default
+  failed_when: >
+    a2dissite_default.rc != 0 and ("does not exist!" not in a2dissite_default.stderr)
+  changed_when: >
+    a2dissite_default.rc != 0 and ("does not exist!" in a2dissite_default.stderr)
+
+- name: Ensure kafka_topics_ui.conf enabled in Apache
+  shell: a2ensite kafka_topics_ui
+  register: a2ensite_kafka_topics_ui
+  failed_when: >
+    a2ensite_kafka_topics_ui.rc != 0 and ("already enabled" not in a2ensite_kafka_topics_ui.stderr)
+  changed_when: >
+    a2ensite_kafka_topics_ui.rc != 0 and ("already enabled" in a2ensite_kafka_topics_ui.stderr)
+
+- name: Ensure virtualhost port {{ kafka_topics_ui_port }} listening in apache2
+  register: kafka_topics_port
+  lineinfile:
+    dest: "/etc/apache2/ports.conf"
+    line: "Listen {{ kafka_topics_ui_port }}"
+    regexp: "Listen\\s+{{ kafka_topics_ui_port }}"
+
+- name: Reload Apache
+  when: kafka_topics_port|changed
+  service:
+    name: apache2
+    state: reloaded

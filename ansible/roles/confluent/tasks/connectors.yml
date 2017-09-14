@@ -1,0 +1,27 @@
+---
+
+- name: Ensure connector dirs exist
+  when: confluent_connectors is defined and confluent_connectors|length > 0
+  file:
+    dest: "{{ item.home_dir }}"
+    state: directory
+    owner: "{{ confluent_user }}"
+    group: "{{ confluent_user_group }}"
+  with_items: "{{ confluent_connectors }}"
+
+- name: Download connector tarballs
+  when: confluent_connectors is defined and confluent_connectors|length > 0
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+  with_items: "{{ confluent_connectors  }}"
+
+- name: Unarchive connector tarballs
+  when: confluent_connectors is defined and confluent_connectors|length > 0
+  unarchive:
+    src: "{{ item.dest }}"
+    dest: "{{ item.home_dir }}"
+    owner: "{{ confluent_user }}"
+    group: "{{ confluent_user_group }}"
+    remote_src: yes
+  with_items: "{{ confluent_connectors  }}"

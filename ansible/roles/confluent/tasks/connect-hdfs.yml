@@ -1,0 +1,11 @@
+---
+
+- name: Include build tasks
+  include: build.yml
+
+- name: Symlink jars to hdfs (classpath)
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items: "{{ confluent_connect_symlinks_to_library }}"

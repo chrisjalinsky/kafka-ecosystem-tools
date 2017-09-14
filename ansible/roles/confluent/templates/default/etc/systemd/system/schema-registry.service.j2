@@ -1,0 +1,13 @@
+[Unit]
+Description=Schema Registry
+Documentation=http://docs.confluent.io/current/schema-registry/docs/index.html
+After=network.target
+
+[Service]
+User={{ confluent_user }}
+ExecStart={{ confluent_dir }}/{{ confluent_bin_dir }}/schema-registry-start {{ confluent_dir }}/{{ confluent_schema_registry_conf_dir }}/{{ confluent_schema_registry_conf_file }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

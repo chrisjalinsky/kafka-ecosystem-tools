@@ -1,0 +1,13 @@
+[Unit]
+Description=Kafka Connect
+Documentation=http://docs.confluent.io/current/connect/index.html
+After=network.target
+
+[Service]
+User={{ confluent_user }}
+ExecStart={{ confluent_dir }}/bin/connect-distributed {{ confluent_dir }}/{{ confluent_schema_registry_conf_dir }}/{{ confluent_connect_conf_file }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

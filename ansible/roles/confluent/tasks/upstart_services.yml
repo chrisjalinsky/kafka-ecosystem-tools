@@ -1,0 +1,9 @@
+---
+
+- name: Ensure upstart service in desired state
+  service:
+    name: "{{ item.name }}"
+    state: "{{ item.state|default('started') }}"
+    sleep: 3
+    enabled: no
+  with_items: "{{ confluent_services }}"

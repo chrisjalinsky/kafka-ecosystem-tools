@@ -1,0 +1,13 @@
+[Unit]
+Description=Kafka Connect HDFS
+Documentation=http://docs.confluent.io/current/connect/connect-hdfs/docs/hdfs_connector.html
+After=network.target
+
+[Service]
+User={{ confluent_user }}
+ExecStart={{ confluent_dir }}/{{ confluent_bin_dir }}/connect-standalone {{ confluent_dir }}/{{ confluent_schema_registry_conf_dir }}/connect-avro-standalone.properties {{ confluent_dir }}/{{ confluent_connect_hdfs_conf_dir }}/{{ confluent_connect_hdfs_conf_file }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,80 @@
+---
+
+- name: Set global facts for data nodes
+  hosts: data_nodes
+  become: yes
+  become_user: root
+  tasks:
+    - name: Set global facts for playbook
+      set_fact:
+        fact_host_iface: "ansible_enp0s8"
+        fact_zk_port: "2181"
+        fact_kafka_port: "9092"
+        fact_schema_registry_port: "8081"
+        fact_kafka_rest_port: "8082"
+        fact_kafka_connect_port: "8083"
+
+- name: Stop Services
+  hosts: data_nodes
+  become: yes
+  become_user: root
+  tasks:
+    - name: Stop Kafka Connect
+      register: kafka_connect_stop
+      systemd:
+        name: connect
+        state: stopped
+
+    - name: Wait max 300 seconds for Kafka Connect port {{ fact_kafka_connect_port }} to close
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_kafka_connect_port }}"
+        state: drained
+
+    - name: Stop Kafka Rest Proxy
+      register: kafka_rest_stop
+      systemd:
+        name: kafka-rest
+        state: stopped
+
+    - name: Wait max 300 seconds for Kafka Rest Proxy port {{ fact_kafka_rest_port }} to close
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_kafka_rest_port }}"
+        state: drained
+
+    - name: Stop Schema Registry
+      register: schema_registry_stop
+      systemd:
+        name: schema-registry
+        state: stopped
+
+    - name: Wait max 300 seconds for schema-registry port {{ fact_schema_registry_port }} to close
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_schema_registry_port }}"
+        state: drained
+
+    - name: Stop Kafka
+      register: kafka_stop
+      systemd:
+        name: kafka
+        state: stopped
+
+    - name: Wait max 300 seconds for kafka port {{ fact_kafka_port }} to close
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_kafka_port }}"
+        state: drained
+
+    - name: Stop Zookeeper
+      register: zoo_stop
+      systemd:
+        name: zookeeper
+        state: stopped
+
+    - name: Wait max 300 seconds for zookeeper port {{ fact_zk_port }} to close
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_zk_port }}"
+        state: drained

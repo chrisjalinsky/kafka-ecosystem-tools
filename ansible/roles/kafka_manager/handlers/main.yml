@@ -1,0 +1,7 @@
+---
+
+- name: "restart_kafka-manager_16.04"
+  systemd:
+    name: "{{ kafka_manager_name }}"
+    state: restarted
+    daemon_reload: yes

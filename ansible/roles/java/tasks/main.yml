@@ -1,0 +1,32 @@
+---
+
+- name: Install Java repository
+  apt_repository:
+    repo: "{{ item.repo }}"
+    update_cache: yes
+  with_items:
+    - repo: "ppa:webupd8team/java"
+
+- name: Set debconf selections for oracle-java{{ java_version }}-installer
+  debconf: name='oracle-java{{ java_version }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'
+
+#- name: Workaround - Ansible 2.2 allows deb conf vtype seen
+#  shell: echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections
+
+- name: Set debconf selections for oracle-java{{ java_version }}-installer
+  debconf: name='oracle-java{{ java_version }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='seen'
+
+- name: Install Oracle Java {{ java_version }}
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+    - "oracle-java{{ java_version }}-installer"
+    #- "maven"
+
+- name: Ensure JAVA_HOME environment variable set - JAVA_HOME={{ java_home }}
+  lineinfile:
+    dest: /etc/environment
+    line: "JAVA_HOME={{ java_home }}"
+    regexp: "^JAVA_HOME=.*$"

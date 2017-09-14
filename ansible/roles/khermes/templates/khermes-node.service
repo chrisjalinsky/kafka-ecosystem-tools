@@ -1,0 +1,26 @@
+[Unit]
+Description=Akka Cluster Node
+Documentation=https://doc.akka.io/docs/akka/snapshot/java/cluster-usage.html
+After=network.target
+
+[Service]
+WorkingDirectory={{ khermes_home_dir }}/scripts
+User={{ khermes_user }}
+Environment=KAFKA_HEAP_OPTS=-Xmx{{ khermes_cluster_node_jvm_heap }}
+ExecStart=/usr/bin/java \
+  -jar \
+  -Dkhermes.client=false \
+  -Dkhermes.ws=false \
+  -Dakka.remote.netty.tcp.hostname={{ inventory_hostname }} \
+  -Dakka.remote.netty.tcp.port={{ khermes_cluster_node_port }} \
+  -Dzookeeper.connection={{ khermes_cluster_zk_conn }} \
+{% for n in khermes_cluster_seed_node_list %}
+  -Dakka.cluster.seed-nodes.{{ loop.index - 1 }}=akka.tcp://{{ khermes_akka_name }}@{{ n }}:{{ khermes_cluster_seed_port }} \
+{% endfor %}
+  -Dmetrics.graphite.name="{{ khermes_akka_name }}-{{ ansible_hostname }}" \
+  {{ khermes_home_dir }}/target/khermes-0.2.0-SNAPSHOT-allinone.jar
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

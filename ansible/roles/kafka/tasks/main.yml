@@ -1,0 +1,96 @@
+---
+
+- name: Ensure Kafka Downloaded
+  when: kafka_package_install_method is defined and kafka_package_install_method == "download"
+  get_url:
+    url: "{{ kafka_download_url }}"
+    dest: "{{ kafka_download_dest_parent_dir }}/{{ kafka_download_name }}.{{ kafka_download_ext }}"
+
+- name: Ensure download dest dir created
+  file:
+    dest: "{{ kafka_download_dest_parent_dir }}/{{ kafka_download_name }}"
+    state: directory
+
+- name: Ensure tarball extracted
+  unarchive:
+    src: "{{ kafka_download_dest_parent_dir }}/{{ kafka_download_name }}.{{ kafka_download_ext }}"
+    dest: "{{ kafka_parent_dir }}"
+    remote_src: yes
+    creates: "{{ kafka_parent_dir }}/{{ kafka_download_name }}/bin/kafka-run-class.sh"
+
+- name: Ensure kafka group present
+  group:
+    name: "{{ kafka_group }}"
+
+- name: Ensure kafka user present
+  user:
+    name: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+
+- name: Ensure kafka directories created and chowned
+  file:
+    dest: "{{ item.dest }}"
+    state: directory
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+    recurse: yes
+  with_items:
+    - dest: "{{ kafka_dir }}"
+    - dest: "{{ kafka_log_dirs }}"
+
+- name: Template upstart script
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int < 16
+  template:
+    src: "kafka.conf.j2"
+    dest: "/etc/init/kafka.conf"
+    backup: yes
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+  notify:
+    - "restart_kafka_{{ ansible_lsb.major_release }}"
+
+- name: Template systemd service script
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int >= 16
+  template:
+    src: "kafka.service"
+    dest: "/etc/systemd/system/kafka.service"
+  notify:
+    - "restart_kafka_{{ ansible_lsb.major_release }}"
+
+- name: Template server.properties
+  template:
+    src: "server.properties.j2"
+    dest: "{{ kafka_dir }}/config/server.properties"
+    backup: yes
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+  notify:
+    - "restart_kafka_{{ ansible_lsb.major_release }}"
+
+- name: Template connect-standalone.properties
+  template:
+    src: "connect-standalone.properties.j2"
+    dest: "{{ kafka_dir }}/config/connect-standalone.properties"
+    backup: yes
+    owner: "{{ kafka_user }}"
+    group: "{{ kafka_group }}"
+
+- name: Ensure {{ kafka_symlink }} symlink present
+  file:
+    src: "{{ kafka_dir }}"
+    dest: "{{ kafka_symlink }}"
+    state: link
+
+- name: Ensure Kafka upstart service started
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int < 16
+  service:
+    name: "kafka"
+    state: started
+    enabled: no
+
+- name: Make sure kafka systemd service is running
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int >= 16
+  systemd:
+    state: started
+    name: kafka
+    daemon_reload: yes

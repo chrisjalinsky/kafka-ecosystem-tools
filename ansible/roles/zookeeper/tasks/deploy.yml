@@ -1,0 +1,82 @@
+---
+
+- name: Ensure zookeeper group present
+  group:
+    name: "{{ zookeeper_group }}"
+
+- name: Ensure zookeeper user present
+  user:
+    name: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+
+- name: Change ownership on zookeeper directory
+  file:
+    path: "{{ zookeeper_dir }}"
+    state: directory
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+    recurse: yes
+
+- name: Create zookeeper data folder
+  file:
+    dest: "{{ zookeeper_data }}"
+    state: directory
+    recurse: yes
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+
+- name: Create zookeeper logs folder
+  file:
+    dest: "{{ zookeeper_logs }}"
+    state: directory
+    recurse: yes
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+
+- name: Template Upstart script
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int < 16
+  template:
+    src: "zookeeper.conf.j2"
+    dest: "/etc/init/zookeeper.conf"
+    backup: yes
+
+- name: Template systemd service file
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int >= 16
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: "zookeeper.service"
+      dest: "/etc/systemd/system/zookeeper.service"
+
+- name: Write myid file
+  template:
+    src: "myid.j2"
+    dest: "{{ zookeeper_data }}/myid"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+  notify:
+    - "restart_zookeeper_{{ ansible_lsb.major_release }}"
+
+- name: Configure zookeeper
+  template:
+    src: "zoo.cfg.j2"
+    dest: "{{ zookeeper_conf_dir }}/zoo.cfg"
+    owner: "{{ zookeeper_user }}"
+    group: "{{ zookeeper_group }}"
+  notify:
+    - "restart_zookeeper_{{ ansible_lsb.major_release }}"
+
+- name: Start zookeeper upstart is running
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int < 16
+  service:
+    name: zookeeper
+    state: started
+    enabled: yes
+
+- name: Make sure zookeeper systemd service is running
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int >= 16
+  systemd:
+    state: started
+    name: zookeeper
+    daemon_reload: yes

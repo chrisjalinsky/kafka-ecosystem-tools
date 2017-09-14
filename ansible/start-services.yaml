@@ -1,0 +1,93 @@
+---
+
+- name: Set global facts for data nodes
+  hosts: data_nodes
+  become: yes
+  become_user: root
+  tasks:
+    - name: Set global facts for playbook
+      set_fact:
+        fact_host_iface: "ansible_enp0s8"
+        fact_zk_port: "2181"
+        fact_kafka_port: "9092"
+        fact_schema_registry_port: "8081"
+        fact_kafka_rest_port: "8082"
+        fact_kafka_connect_port: "8083"
+        fact_kafka_manager_port: "9000"
+
+- name: Start Services
+  hosts: data_nodes
+  become: yes
+  become_user: root
+  tasks:
+    - name: Start Zookeeper
+      register: zoo_start
+      systemd:
+        name: zookeeper
+        state: started
+
+    - name: Wait max 300 seconds for zookeeper port {{ fact_zk_port }} to open
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_zk_port }}"
+
+    - name: Check ZK health
+      register: zk_ok_check
+      shell: "echo ruok | nc {{ inventory_hostname }} 2181"
+      changed_when: "zk_ok_check.stdout is defined and 'imok' in zk_ok_check.stdout"
+      failed_when: "zk_ok_check.stdout is defined and 'imok' not in zk_ok_check.stdout"
+
+    - name: Start Kafka
+      register: kafka_start
+      systemd:
+        name: kafka
+        state: started
+
+    - name: Wait max 300 seconds for kafka port {{ fact_kafka_port }} to open
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_kafka_port }}"
+
+    - name: Start Schema Registry
+      register: schema_registry_start
+      systemd:
+        name: schema-registry
+        state: started
+
+    - name: Wait max 300 seconds for schema-registry port {{ fact_schema_registry_port }} to open
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_schema_registry_port }}"
+
+    - name: Start Kafka Rest Proxy
+      register: kafka_rest_start
+      systemd:
+        name: kafka-rest
+        state: started
+
+    - name: Wait max 300 seconds for Kafka Rest Proxy port {{ fact_kafka_rest_port }} to open
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_kafka_rest_port }}"
+
+    - name: Start Kafka Manager
+      register: kafka_manager_start
+      systemd:
+        name: kafka-manager
+        state: started
+
+    - name: Wait max 300 seconds for Kafka Manager port {{ fact_kafka_manager_port }}
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_kafka_manager_port }}"
+
+    - name: Start Kafka Connect
+      register: kafka_connect_start
+      systemd:
+        name: connect
+        state: started
+
+    - name: Wait max 300 seconds for Kafka Connect port {{ fact_kafka_connect_port }} to open (Takes awhile to load plugins)
+      wait_for:
+        host: "{{ hostvars[inventory_hostname][fact_host_iface]['ipv4']['address'] }}"
+        port: "{{ fact_kafka_connect_port }}"

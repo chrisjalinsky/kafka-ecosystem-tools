@@ -1,0 +1,17 @@
+---
+
+- include: user.yml
+- include: install.yml
+- include: templates.yml
+
+- include: upstart_services.yml
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int < 16
+
+- include: systemd_services.yml
+  when: ansible_os_family == "Debian" and ansible_lsb.major_release|int >= 16
+
+- include: connect-hdfs.yml
+  when: confluent_connect_hdfs_build_src
+
+- include: connectors.yml
+  when: confluent_connectors is defined and confluent_connectors|length > 0

@@ -1,0 +1,16 @@
+---
+
+- name: Ensure systemd dir exists
+  file:
+    dest: "{{ kafka_manager_systemd_system_dir }}"
+    state: directory
+
+- name: Ensure systemd templates synced
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - src: "{{ kafka_manager_name }}.service.j2"
+      dest: "{{ kafka_manager_systemd_system_dir }}/{{ kafka_manager_name }}.service"
+  notify:
+    - "restart_{{ kafka_manager_name }}_{{ ansible_distribution_version }}"

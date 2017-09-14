@@ -1,0 +1,12 @@
+---
+
+- name: restart_zookeeper_16
+  systemd:
+    name: zookeeper
+    state: restarted
+    daemon_reload: yes
+
+- name: restart_zookeeper_14
+  service:
+    name: zookeeper
+    state: restarted

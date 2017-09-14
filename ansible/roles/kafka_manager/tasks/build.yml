@@ -1,0 +1,26 @@
+---
+
+- name: Ensure git repo downloaded
+  git:
+    repo: "{{ kafka_manager_git_url }}"
+    dest: "{{ kafka_manager_home_dir }}"
+    update: no
+    version: "{{ kafka_manager_git_version }}"
+
+- name: Ensure sbt build tool deb package installed
+  apt:
+    deb: "{{ kafka_manager_sbt_deb_url }}"
+    allow_unauthenticated: yes
+
+- name: Ensure the package is built - takes a long time to build
+  shell: sbt clean dist
+  args:
+    chdir: "{{ kafka_manager_home_dir }}"
+    creates: "{{ kafka_manager_zip_dest }}"
+
+- name: Ensure build is unarchived
+  unarchive:
+    src: "{{ kafka_manager_zip_dest }}"
+    dest: "{{ kakfa_manager_zip_dir }}/"
+    creates: "{{ kakfa_manager_zip_dir }}/{{ kafka_manager_relative_exec }}"
+    remote_src: yes

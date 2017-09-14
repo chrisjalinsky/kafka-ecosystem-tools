@@ -1,0 +1,30 @@
+---
+
+kafka_manager_name: "kafka-manager"
+kafka_manager_user: "root"
+
+kafka_manager_git_url: "https://github.com/yahoo/kafka-manager.git"
+kafka_manager_git_version: "1.3.3.13"
+
+kafka_manager_parent_dir: "/opt"
+kafka_manager_home_dir: "{{ kafka_manager_parent_dir }}/{{ kafka_manager_name }}_{{ kafka_manager_git_version }}"
+
+kafka_manager_sbt_version: "1.0.0"
+kafka_manager_sbt_deb_url: "https://dl.bintray.com/sbt/debian/sbt-{{ kafka_manager_sbt_version }}.deb"
+
+kafka_manager_zip_name: "{{ kafka_manager_name }}-{{ kafka_manager_git_version }}"
+kakfa_manager_zip_dir: "{{ kafka_manager_home_dir }}/target/universal"
+kafka_manager_zip_archive_name: "{{kafka_manager_zip_name }}.zip"
+kafka_manager_zip_dest: "{{ kafka_manager_home_dir }}/target/universal/{{ kafka_manager_zip_archive_name }}"
+
+kafka_manager_symlink: "{{ kafka_manager_parent_dir }}/kafka-manager"
+kafka_manager_relative_exec: "bin/kafka-manager"
+kafka_manager_relative_conf_dir: "conf"
+
+kafka_manager_systemd_system_dir: "/etc/systemd/system"
+
+kafka_manager_tasks:
+  - "build"
+  - "upload"
+
+kafka_manager_app_cfg_zk_hosts: "{{ inventory_hostname }}:2181"

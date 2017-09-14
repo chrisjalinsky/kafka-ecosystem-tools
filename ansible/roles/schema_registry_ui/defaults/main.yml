@@ -1,0 +1,20 @@
+---
+
+schema_registry_ui_version: "0.9.1"
+schema_registry_ui_download: "url"
+
+schema_registry_ui_tmpdir: "/tmp"
+schema_registry_ui_parentdir: "/var/www/html/schema_registry"
+
+schema_registry_port: "80"
+schema_registry_ui_owner: "www-data"
+schema_registry_ui_group: "www-data"
+
+schema_registry_ui_tarball_format: "tar.gz"
+schema_registry_ui_tarball_name: "schema-registry-ui-{{ schema_registry_ui_version }}"
+schema_registry_ui_tarball_file: "{{ schema_registry_ui_tarball_name }}.{{ schema_registry_ui_tarball_format }}"
+schema_registry_ui_tarball_dest: "{{ schema_registry_ui_tmpdir }}/{{ schema_registry_ui_tarball_file }}"
+
+schema_registry_ui_tarball_url: "https://github.com/Landoop/schema-registry-ui/releases/download/v.{{ schema_registry_ui_version }}/{{ schema_registry_ui_tarball_file }}"
+
+schema_registry_ui_registry_host: "{{ inventory_hostname }}"

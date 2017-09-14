@@ -1,0 +1,24 @@
+---
+
+- name: Download HDFS Confluent Git repo
+  git:
+    repo: "{{ confluent_build_git_repo }}"
+    update: no
+    version: "v{{ confluent_version }}"
+    dest: "{{ confluent_connect_hdfs_src_dir }}"
+
+- name: Ensure git repo chowned to user
+  file:
+    dest: "{{ confluent_connect_hdfs_src_dir }}"
+    state: directory
+    recurse: yes
+    owner: "{{ confluent_user }}"
+    group: "{{ confluent_user_group }}"
+
+- name: Template build templates
+  template:
+    src: "{{ confluent_template_key }}/pom.xml"
+    dest: "{{ confluent_connect_hdfs_src_dir }}/pom.xml"
+    backup: yes
+    owner: "{{ confluent_user }}"
+    group: "{{ confluent_user_group }}"
