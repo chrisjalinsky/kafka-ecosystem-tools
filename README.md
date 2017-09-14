@@ -1,15 +1,15 @@
 # Kafka Ecosystem Tools
 
-A Kafka and ecosystem test environment.
+**A Kafka and ecosystem test environment.**
 
-**The goal is integrate the following projects:**
-  * Confluent Open Source Platform Tools
-  * Khermes Distributed data generation via Akka Cluster
-  * Kafka Manager
-  * Stream Reactor Kafka Connectors
-  * Landoop Kafka UIs
+### The goal is integrate the following projects:
+* Confluent Open Source Platform Tools
+* Khermes Distributed data generation via Akka Cluster
+* Kafka Manager
+* Stream Reactor Kafka Connectors
+* Landoop Kafka UIs
 
-**Software used:**
+### Software used:
 * Vagrant
 * Virtualbox
 * Ansible
