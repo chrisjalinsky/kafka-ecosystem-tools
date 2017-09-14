@@ -67,11 +67,9 @@ Services include: Khermes Akka Seed, Khermes Akka Node
 **NOTE:** Landoop UIs are using Apache Web Server Virtualhosts
 
 ### Khermes Akka Distributed Data generator for Kafka
-[STRATIO BIG DATA](http://www.stratio.com/) [Khermes](https://github.com/Stratio/khermes)
+[Stratio Khermes Project](https://github.com/Stratio/khermes)
 
-Khermes will serve as a study in Akka Actors, web sockets and fake data generation.
-
-Refer to the example directions to start pushing data to Kafka:
+Khermes will serve as a study in Akka Actors, web sockets and fake data generation. Refer to the example directions to start pushing data to Kafka.
 
 [Set up Khermes](https://github.com/Stratio/khermes/wiki/Set-up-Khermes)
 
