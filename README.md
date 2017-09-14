@@ -21,17 +21,17 @@
 vagrant up
 ```
 
-**Install playbook**
+### Install Kafka and ecosystem tools
 ```
 ansible-playbook install.yaml -i inventory.py
 ```
 
-**Start [Confluent](https://github.com/confluentinc) and [Landoop](https://github.com/Landoop) UIs and Data Mountaineer's [Stream Reactor](https://github.com/datamountaineer/stream-reactor) Plugins and services playbooks**
+### Start [Confluent](https://github.com/confluentinc) and [Landoop](https://github.com/Landoop) UIs and Data Mountaineer's [Stream Reactor](https://github.com/datamountaineer/stream-reactor) Plugins and services
 ```
 ansible-playbook start-services.yaml -i inventory.py
 ```
 
-**Start [Khermes](https://github.com/Stratio/khermes/wiki/Getting-started) Akka app playbooks**
+### Start [Khermes](https://github.com/Stratio/khermes/wiki/Getting-started) Akka cluster Distributed generation app
 ```
 ansible-playbook start-app.yaml -i inventory.py
 ```
@@ -41,26 +41,24 @@ ansible-playbook start-app.yaml -i inventory.py
 By default this will create:
 
 ### Kafka Cluster
-3 node Kafka cluster and Zookeeper ensemble
+3 node Kafka cluster and Zookeeper ensemble.
+Services include: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
 
 #### Hosts:
-
-- **data1.lan** - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
-- **data2.lan** - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
-- **data3.lan** - Services: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
+- **data1.lan**
+- **data2.lan**
+- **data3.lan**
 
 ### Akka Cluster (Khermes)
 3 node Akka Cluster to generate Avro Data in Kafka
-
+Services include: Khermes Akka Seed, Khermes Akka Node
 #### Hosts:
 
-- **akka1.lan** - Services: Khermes Akka Seed, Khermes Akka Node
-- **akka2.lan** - Services: Khermes Akka Seed, Khermes Akka Node
-- **akka3.lan** - Services: Khermes Akka Seed, Khermes Akka Node
+- **akka1.lan**
+- **akka2.lan**
+- **akka3.lan**
 
 ### Notable UIs:
-UIs are using Apache Web Server Virtualhosts
-
 * [Confluent Schema Registry](http://data1.lan)
 * [Kafka Topic UI](http://data1.lan:8090/#/)
 * [Confluent Connect UI](http://data1.lan:8084/)
@@ -69,12 +67,14 @@ UIs are using Apache Web Server Virtualhosts
 * [Kafka Manager](http://data1.lan:9000/)
 * [Khermes Console](http://akka1.lan:9080/console)
 
+**NOTE:** Landoop UIs are using Apache Web Server Virtualhosts
+
 ### Khermes Akka Distributed Data generator for Kafka
-[STRATIO BIG DATA](http://www.stratio.com/)
+[STRATIO BIG DATA](http://www.stratio.com/) [Khermes](https://github.com/Stratio/khermes)
 
-It will serve as a study in Akka Actors, web sockets and fake data generation.
+Khermes will serve as a study in Akka Actors, web sockets and fake data generation.
 
-Follow the example directions to start pushing data to Kafka:
+Refer to the example directions to start pushing data to Kafka:
 
 [Set up Khermes](https://github.com/Stratio/khermes/wiki/Set-up-Khermes)
 
