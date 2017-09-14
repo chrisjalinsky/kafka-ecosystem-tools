@@ -41,22 +41,18 @@ ansible-playbook start-app.yaml -i inventory.py
 By default this will create:
 
 ### Kafka Cluster
-3 node Kafka cluster and Zookeeper ensemble.
+1 node Kafka cluster and Zookeeper ensemble.
 Services include: Kafka, Zookeeper, Confluent Connect, Rest Proxy, Landoop UIs, Kafka Manager
 
 #### Hosts:
 - **data1.lan**
-- **data2.lan**
-- **data3.lan**
 
 ### Akka Cluster (Khermes)
-3 node Akka Cluster to generate Avro Data in Kafka
+1 node Akka Cluster to generate Avro Data in Kafka
 Services include: Khermes Akka Seed, Khermes Akka Node
 #### Hosts:
 
 - **akka1.lan**
-- **akka2.lan**
-- **akka3.lan**
 
 ### Notable UIs:
 * [Confluent Schema Registry](http://data1.lan)
@@ -98,16 +94,18 @@ Use the standard Apache release instead of the versions in the Confluent Package
 
 Look at the ```./ansible/hosts.yaml``` file for current Virtualbox usage. This is currently set very low.
 
-**Defaults:**
+### Defaults:
 
 * Vagrant box Ubuntu/Xenial - ```bento/ubuntu-16.04```
 * 2 GB RAM
 * 1 CPU
 * Private Virtualbox Host Network ip in the subnet ```10.10.10.0/24``` range starting at ```10.10.10.21```
 
-**Options**
+### Options:
 
-mix and match storage and network settings in the ./ansible/hosts.yaml's ```_meta.hostvars``` section
+**Mix and match storage and network settings in the ./ansible/hosts.yaml's ```_meta.hostvars``` section**
+
+Options include:
 * static network interfaces
 * network bridge interfaces
 * extra storage devices

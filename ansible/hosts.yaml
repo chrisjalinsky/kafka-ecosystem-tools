@@ -1,11 +1,10 @@
 ---
 
 # Kafka specific hosts
+
 data_nodes:
   hosts:
     - data1.lan
-    - data2.lan
-    - data3.lan
   vars:
     ansible_ssh_user: vagrant
     ansible_ssh_private_key_file: "~/.vagrant.d/insecure_private_key"
@@ -15,11 +14,10 @@ confluent_servers:
     - data_nodes
 
 # Khermes Akka App specific hosts
+
 akka_seeds:
   hosts:
     - akka1.lan
-    - akka2.lan
-    - akka3.lan
   vars:
     ansible_ssh_user: vagrant
     ansible_ssh_private_key_file: "~/.vagrant.d/insecure_private_key"
@@ -27,8 +25,6 @@ akka_seeds:
 akka_nodes:
   hosts:
     - akka1.lan
-    - akka2.lan
-    - akka3.lan
   vars:
     ansible_ssh_user: vagrant
     ansible_ssh_private_key_file: "~/.vagrant.d/insecure_private_key"
@@ -39,17 +35,10 @@ akka_cluster:
     - akka_nodes
 
 # Host Specific
-# We'll just use defaults for now
+
 _meta:
   hostvars:
-#    data1.lan:
-#      vagrant_ifaces:
-#        - ip: "172.136.1.11"
-#        - bridge: "en0: Wi-Fi (AirPort)"
-#        - bridge: "en0: Wi-Fi (AirPort)"
-#      vagrant_box: "bento/ubuntu-16.04"
-#      vagrant_disks:
-#        - size: 10000
-#        - size: 10000
-#    akka2.lan:
-#      vagrant_box: "ubuntu/trusty64"
+    data1.lan:
+      vagrant_mem: 8192
+      vagrant_disks:
+        - size: 10000
